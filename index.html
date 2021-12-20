@@ -1,0 +1,105 @@
+   
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Amaze UI 在线调试</title>
+        <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.5.0/css/amazeui.min.css"/>
+      </head>
+<body>
+<div id="box" style="overflow: auto;height: 100%">
+    <div>
+        <h1>这是一个本地的Html文件</h1>
+    </div>
+    <div style="margin-top: 2rem;margin-left: 1rem;">
+        <div>
+            <button onclick="jsCallFlutter()" style="width:100%;height:100px">点击调用Flutter代码显示Toast1</button>
+        </div>
+        <div>
+            <button onclick="jsCallFlutter2()" style="width:100%;height:100px">点击调用Flutter代码实现关闭当前页面</button>
+        </div>
+        <button id="open_douyin">打开抖音搜索页</button>
+    
+        <ul id="call_me">
+
+        </ul>
+        <p id="p1" style="visibility:hidden;">
+            Flutter 调用了 JS，我可以被看见啦！
+        </p>
+    </div>
+</div>
+
+<script>
+    function jsCallFlutter(){
+      toast.postMessage("JS调用Flutter postMessage");
+    }
+
+    function jsCallFlutter2(){
+      jscomm.postMessage("JS调用Flutter postMessage");
+    }
+
+    function flutterCallJsMethod(message){
+      alert(message);
+      return message;
+    }
+
+    function flutterCallJsMethodNoResult(message){
+        document.getElementById("p1").style.visibility = message;
+    }
+
+    !(function (window) {
+        var namespace = "__PRIME_VIDEO";
+        function postMessage(type, data) {
+            try {
+                window[namespace].postMessage(JSON.stringify({type: type, data: data}));
+            } catch (e) {
+                window.alert('调用失败');
+            }
+        }
+        window.PrimeSdk = {
+            confirm: function (content) {
+                postMessage('confirm', content);
+            },
+            openSchemaUrl: function (url) {
+                postMessage('openSchemaUrl', url);
+            },
+            exit: function () {
+                postMessage('exit');
+            }
+        };
+    })(window);
+
+    function callMe() {
+        document.getElementById('call_me').innerHTML += '<li>You called! </li>';
+    };
+    (function () {
+        var confirmBtn =  document.getElementById('confirm');
+        var openWechatBtn =  document.getElementById('open_wechat');
+        var openDouyinBtn =  document.getElementById('open_douyin');
+        var openBrowserBtn =  document.getElementById('open_browser');
+        var exitBtn =  document.getElementById('exit');
+        confirmBtn.addEventListener('click', function () {
+            PrimeSdk.confirm("Hello");
+        }, false);
+        openWechatBtn.addEventListener('click', function () {
+            PrimeSdk.openSchemaUrl("weixin://dl/moments");
+        }, false);
+        openDouyinBtn.addEventListener('click', function () {
+            PrimeSdk.openSchemaUrl("snssdk1128://search");
+        }, false);
+        openBrowserBtn.addEventListener('click', function () {
+            PrimeSdk.openSchemaUrl("https://flutter.dev");
+        }, false);
+        exitBtn.addEventListener('click', function () {
+            PrimeSdk.exit();
+        }, false);
+    })();
+
+</script>
+</body>
+</html>
+
+
